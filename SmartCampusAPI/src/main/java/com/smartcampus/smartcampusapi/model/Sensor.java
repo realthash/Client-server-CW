@@ -6,7 +6,6 @@ public class Sensor {
     private String type; // Category , e.g., "Temperature", "Occupancy", "CO2"
     private String status; // Current state: "ACTIVE", "MAINTENANCE", or "OFFLINE"
     private double currentValue; // The most recent measurement recorded
-
     private String roomId; // Foreign key linking to the Room where the sensor is located.
 
     public Sensor(String id, String type, String status, double currentValue, String roomId) {
