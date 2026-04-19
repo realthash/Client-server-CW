@@ -11,15 +11,27 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class DataStore {
 
+    /*
+     * Key=roomId (e.g. "LIB-301")
+     * Value = Room object
+     */
     public static final Map<String, Room> rooms = new ConcurrentHashMap<>();
+    /*
+     * Key = sensorId (e.g. "TEMP-001")
+     * Value = Sensor object
+     */
     public static final Map<String, Sensor> sensors = new ConcurrentHashMap<>();
+
+    /*
+     * Key = sensorId
+     * Value = the list of ALL readings ever posted for that sensor
+     */
     public static final Map<String, List<SensorReading>> readings = new ConcurrentHashMap<>();
 
     /*
      * Static initialiser block — this runs ONCE when the class is first
-     * loaded by the JVM. It pre-populates the store with sample data so
-     * your API is not completely empty when the marker tests it for the
-     * first time. This is important for your video demo too.
+     * loaded by the JVM. API is not completely empty
+     * when the marker tests it for the first time.
      */
     static {
         // Create two sample rooms
