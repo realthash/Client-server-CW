@@ -53,4 +53,11 @@ public class Room {
         this.sensorIds = sensorIds;
     }
 
+    @Override
+    public String toString() {
+        return "Room{" + "id=" + id + ", name=" + name + ", capacity=" + capacity + ", sensorIds=" + sensorIds + '}';
+    }
+    
+    
+
 }
