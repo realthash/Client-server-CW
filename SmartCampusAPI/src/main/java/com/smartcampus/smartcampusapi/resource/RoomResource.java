@@ -10,10 +10,12 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 
+import com.smartcampus.exception.RoomNotEmptyException;
 import com.smartcampus.smartcampusapi.datastore.DataStore;
 import com.smartcampus.smartcampusapi.model.Room;
 
@@ -21,7 +23,7 @@ import com.smartcampus.smartcampusapi.model.Room;
  * JAX-RS Resource class for managing Room entities.
  * Base path is /room, and it handles JSON requests and responses.
  */
-@Path("/room")
+@Path("/rooms")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 
@@ -56,7 +58,7 @@ public class RoomResource {
                     .entity("{\"error\": \"Room not found with ID: " + roomId + "\"}").build();
 
         }
-        return Response.ok(roomId).build();
+        return Response.ok(room).build();
     }
 
     /**
@@ -69,8 +71,6 @@ public class RoomResource {
      */
     @POST
     public Response createRoom(Room room) {
-
-        room = new Room();
 
         if (room.getId() == null || room.getId().trim().isEmpty()) {
             return Response.status(Response.Status.BAD_REQUEST).entity("{\"error\": \"Room ID is required.\"}").build();
@@ -90,5 +90,25 @@ public class RoomResource {
                 .fromUri("http://localhost:8080/SmartCampusAPI/api/v1/rooms/{id}")
                 .build(room.getId());
         return Response.created(location).entity(room).build();
+    }
+
+    @DELETE
+    @Path("/{roomId}")
+    public Response deleteRoom(@PathParam("roomId") String roomId) {
+        Room room = DataStore.rooms.get(roomId);
+
+        if (room == null) {
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity("{\"error\": \"Room not found with ID: " + roomId + "\"}").build();
+        }
+
+        if (!room.getSensorIds().isEmpty()) {
+            throw new RoomNotEmptyException("Room '" + roomId + "' cannot be deleted because it still " +
+                    "has " + room.getSensorIds().size() + " sensor(s) assigned to it. " +
+                    "Please remove all sensors before decommissioning this room.");
+        }
+        DataStore.rooms.remove(roomId);
+        return Response.noContent().build();
+
     }
 }
