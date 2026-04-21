@@ -8,6 +8,10 @@ public class Sensor {
     private double currentValue; // The most recent measurement recorded
     private String roomId; // Foreign key linking to the Room where the sensor is located.
 
+    public Sensor() {
+
+    }
+
     public Sensor(String id, String type, String status, double currentValue, String roomId) {
         this.id = id;
         this.type = type;
