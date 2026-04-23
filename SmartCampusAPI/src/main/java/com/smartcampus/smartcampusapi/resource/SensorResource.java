@@ -19,6 +19,7 @@ import javax.ws.rs.core.UriBuilder;
 import com.smartcampus.exception.LinkedResourceNotFoundException;
 import com.smartcampus.smartcampusapi.datastore.DataStore;
 import com.smartcampus.smartcampusapi.model.Sensor;
+import com.smartcampus.exception.ErrorResponse;
 
 @Path("/sensors")
 @Produces(MediaType.APPLICATION_JSON)
@@ -44,23 +45,38 @@ public class SensorResource {
     @POST
     public Response createSensor(Sensor sensor) {
         if (sensor.getId() == null || sensor.getId().trim().isEmpty()) {
-            return Response.status(Response.Status.BAD_REQUEST).build();
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity(new ErrorResponse(400, "Bad Request", "Sensor ID is required."))
+                    .type(MediaType.APPLICATION_JSON)
+                    .build();
+
         }
 
         if (sensor.getRoomId() == null || sensor.getRoomId().trim().isEmpty()) {
-            return Response.status(Response.Status.BAD_REQUEST).build();
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity(new ErrorResponse(400, "Bad Request", "roomId is required."))
+                    .type(MediaType.APPLICATION_JSON)
+                    .build();
+
         }
 
         String status = sensor.getStatus();
         if (sensor.getStatus() == null || (!status.equals("ACTIVE") && !status.equals("OFFLINE")
                 && !status.equals("MAINTENANCE"))) {
             return Response.status(Response.Status.BAD_REQUEST)
-                    .entity("{\"error\": \"Status must be ACTIVE, MAINTENANCE, or OFFLINE.\"}").build();
+                    .entity(new ErrorResponse(400, "Bad Request", "Status must be ACTIVE, MAINTENANCE, or OFFLINE."))
+                    .type(MediaType.APPLICATION_JSON)
+                    .build();
+
         }
 
         if (DataStore.sensors.containsKey(sensor.getId())) {
             return Response.status(Response.Status.BAD_REQUEST)
-                    .entity("{\"error\": \"A sensor with ID '" + sensor.getId() + "' already exists.\"}").build();
+                    .entity(new ErrorResponse(400, "Bad Request",
+                            "A sensor with ID '" + sensor.getId() + "' already exists."))
+                    .type(MediaType.APPLICATION_JSON)
+                    .build();
+
         }
 
         if (!DataStore.rooms.containsKey(sensor.getRoomId())) {
@@ -92,7 +108,8 @@ public class SensorResource {
         if (sensor == null) {
             return Response
                     .status(Response.Status.NOT_FOUND)
-                    .entity("{\"error\": \"Sensor not found with ID: " + sensorId + "\"}")
+                    .entity(new ErrorResponse(404, "Not Found", "Sensor not found with ID: " + sensorId))
+                    .type(MediaType.APPLICATION_JSON)
                     .build();
         }
 

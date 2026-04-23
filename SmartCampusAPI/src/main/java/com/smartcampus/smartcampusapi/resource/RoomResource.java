@@ -18,6 +18,7 @@ import javax.ws.rs.core.UriBuilder;
 import com.smartcampus.exception.RoomNotEmptyException;
 import com.smartcampus.smartcampusapi.datastore.DataStore;
 import com.smartcampus.smartcampusapi.model.Room;
+import com.smartcampus.exception.ErrorResponse;
 
 /**
  * JAX-RS Resource class for managing Room entities.
@@ -55,9 +56,11 @@ public class RoomResource {
 
         if (room == null) {
             return Response.status(Response.Status.NOT_FOUND)
-                    .entity("{\"error\": \"Room not found with ID: " + roomId + "\"}").build();
-
+                    .entity(new ErrorResponse(404, "Not Found", "Room not found with ID: " + roomId))
+                    .type(MediaType.APPLICATION_JSON)
+                    .build();
         }
+
         return Response.ok(room).build();
     }
 
@@ -73,16 +76,26 @@ public class RoomResource {
     public Response createRoom(Room room) {
 
         if (room.getId() == null || room.getId().trim().isEmpty()) {
-            return Response.status(Response.Status.BAD_REQUEST).entity("{\"error\": \"Room ID is required.\"}").build();
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity(new ErrorResponse(400, "Bad Request", "Room ID is required."))
+                    .type(MediaType.APPLICATION_JSON)
+                    .build();
+
         }
         if (room.getName() == null || room.getName().trim().isEmpty()) {
-            return Response.status(Response.Status.BAD_REQUEST).entity("{\"error\": \"Room name is required.\"}")
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity(new ErrorResponse(400, "Bad Request", "Room name is required."))
+                    .type(MediaType.APPLICATION_JSON)
                     .build();
+
         }
 
         if (DataStore.rooms.containsKey(room.getId())) {
-            return Response.status(Response.Status.BAD_REQUEST).entity("{\"error\": \"Room ID is already exist\"}")
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity(new ErrorResponse(400, "Bad Request", "Room ID already exists."))
+                    .type(MediaType.APPLICATION_JSON)
                     .build();
+
         }
         DataStore.rooms.put(room.getId(), room);
 
@@ -99,7 +112,10 @@ public class RoomResource {
 
         if (room == null) {
             return Response.status(Response.Status.NOT_FOUND)
-                    .entity("{\"error\": \"Room not found with ID: " + roomId + "\"}").build();
+                    .entity(new ErrorResponse(404, "Not Found", "Room not found with ID: " + roomId))
+                    .type(MediaType.APPLICATION_JSON)
+                    .build();
+
         }
 
         if (!room.getSensorIds().isEmpty()) {

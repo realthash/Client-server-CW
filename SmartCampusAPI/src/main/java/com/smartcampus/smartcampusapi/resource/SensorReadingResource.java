@@ -16,6 +16,7 @@ import com.smartcampus.exception.SensorUnavailableException;
 import com.smartcampus.smartcampusapi.datastore.DataStore;
 import com.smartcampus.smartcampusapi.model.Sensor;
 import com.smartcampus.smartcampusapi.model.SensorReading;
+import com.smartcampus.exception.ErrorResponse;
 
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
@@ -33,7 +34,10 @@ public class SensorReadingResource {
 
         if (sensor == null) {
             return Response.status(Response.Status.NOT_FOUND)
-                    .entity("{\"error\": \"Sensor not found with ID: " + sensorId + "\"}").build();
+                    .entity(new ErrorResponse(404, "Not Found", "Sensor not found with ID: " + sensorId))
+                    .type(MediaType.APPLICATION_JSON)
+                    .build();
+
         }
 
         List<SensorReading> sensorReadings = DataStore.readings.getOrDefault(sensorId, new ArrayList<>());
@@ -47,8 +51,11 @@ public class SensorReadingResource {
         Sensor sensor = DataStore.sensors.get(sensorId);
 
         if (sensor == null) {
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity("{\"error\": \"Sensor not found with ID: " + sensorId + "\"}").build();
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity(new ErrorResponse(404, "Not Found", "Sensor not found with ID: " + sensorId))
+                    .type(MediaType.APPLICATION_JSON)
+                    .build();
+
         }
 
         if ("MAINTENANCE".equals(sensor.getStatus())) {
@@ -66,8 +73,10 @@ public class SensorReadingResource {
         if (reading == null) {
             return Response
                     .status(Response.Status.BAD_REQUEST)
-                    .entity("{\"error\": \"Request body is required.\"}")
+                    .entity(new ErrorResponse(400, "Bad Request", "Request body is required."))
+                    .type(MediaType.APPLICATION_JSON)
                     .build();
+
         }
 
         SensorReading newReading = new SensorReading(reading.getValue());
