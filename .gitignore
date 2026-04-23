@@ -27,6 +27,7 @@ buildNumber.properties
 
 # IDE - NetBeans
 nb-configuration.xml
+nbactions.xml
 nbproject/
 
 # OS and Temporary files
@@ -38,4 +39,3 @@ Thumbs.db
 
 
 cmd.txt
-Testing.java

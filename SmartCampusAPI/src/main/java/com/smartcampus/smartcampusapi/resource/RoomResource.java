@@ -75,7 +75,7 @@ public class RoomResource {
         if (room.getId() == null || room.getId().trim().isEmpty()) {
             return Response.status(Response.Status.BAD_REQUEST).entity("{\"error\": \"Room ID is required.\"}").build();
         }
-        if (room.getName() == null || room.getId().trim().isEmpty()) {
+        if (room.getName() == null || room.getName().trim().isEmpty()) {
             return Response.status(Response.Status.BAD_REQUEST).entity("{\"error\": \"Room name is required.\"}")
                     .build();
         }

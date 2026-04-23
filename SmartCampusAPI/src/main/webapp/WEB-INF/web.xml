@@ -13,7 +13,7 @@
         </init-param>
         <init-param>
             <param-name>jersey.config.server.provider.packages</param-name>
-            <param-value>com.smartcampus.smartcampusapi.resources</param-value>
+            <param-value>com.smartcampus.smartcampusapi.resource,com.smartcampus.exception,com.smartcampus.filter</param-value>
         </init-param>
         <load-on-startup>1</load-on-startup>
     </servlet>
